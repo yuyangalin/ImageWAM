@@ -420,34 +420,32 @@ NUM_GPUS=8 bash scripts/ovis_u1/run_eval_ovis_libero_plus.sh
 
 ## Release Checkpoints
 
-TODO: Replace `TODO_IMAGEWAM_MODEL_REPO` with the final Hugging Face model repo.
+The following FLUX.2 ImageWAM checkpoints are available on Hugging Face:
+
+- `yuyangalin/ImageWAM-FLUX.2-4B-LIBERO`
+- `yuyangalin/ImageWAM-FLUX.2-4B-RoboTwin`
+- `yuyangalin/ImageWAM-FLUX.2-9B-LIBERO`
+
+Checkpoints of other variants will be released later. Stay focused!
 
 ```bash
-mkdir -p checkpoints/imagewam_release
-
-huggingface-cli download TODO_IMAGEWAM_MODEL_REPO \
+mkdir -p checkpoints/imagewam_release/libero/flux2_klein_4b
+huggingface-cli download yuyangalin/ImageWAM-FLUX.2-4B-LIBERO \
   --repo-type model \
-  --local-dir checkpoints/imagewam_release
+  --local-dir checkpoints/imagewam_release/libero/flux2_klein_4b
+
+mkdir -p checkpoints/imagewam_release/robotwin/flux2_klein_4b
+huggingface-cli download yuyangalin/ImageWAM-FLUX.2-4B-RoboTwin \
+  --repo-type model \
+  --local-dir checkpoints/imagewam_release/robotwin/flux2_klein_4b
+
+mkdir -p checkpoints/imagewam_release/libero/flux2_klein_9b
+huggingface-cli download yuyangalin/ImageWAM-FLUX.2-9B-LIBERO \
+  --repo-type model \
+  --local-dir checkpoints/imagewam_release/libero/flux2_klein_9b
 ```
 
-<!--
-huggingface-cli download TODO_IMAGEWAM_MODEL_REPO \
-  libero/flux2_klein_4b/checkpoint.pt \
-  libero/flux2_klein_4b/dataset_stats.json \
-  robotwin/flux2_klein_4b/checkpoint.pt \
-  robotwin/flux2_klein_4b/dataset_stats.json \
-  libero_plus/flux2_klein_9b/checkpoint.pt \
-  libero_plus/flux2_klein_9b/dataset_stats.json \
-  libero/omnigen2/checkpoint.pt \
-  libero/omnigen2/dataset_stats.json \
-  robotwin/omnigen2/checkpoint.pt \
-  robotwin/omnigen2/dataset_stats.json \
-  libero_plus/omnigen2/checkpoint.pt \
-  libero_plus/omnigen2/dataset_stats.json \
-  libero_plus/ovis_u1/checkpoint.pt \
-  libero_plus/ovis_u1/dataset_stats.json \
-  --local-dir checkpoints/imagewam_release
--->
+Each model directory is expected to contain `checkpoint.pt`, `dataset_stats.json`, and the original training config, usually `train_config.yaml`.
 
 Example: evaluate the released FLUX.2 LIBERO checkpoint:
 

@@ -419,31 +419,33 @@ NUM_GPUS=8 bash scripts/ovis_u1/run_eval_ovis_libero_plus.sh
 
 ## Release 权重
 
-TODO: 将 `TODO_IMAGEWAM_MODEL_REPO` 和下面的文件名替换为最终 Hugging Face model repo 与 release artifact 名称。
+目前已上传以下 FLUX.2 ImageWAM checkpoint 到 Hugging Face：
+
+- `yuyangalin/ImageWAM-FLUX.2-4B-LIBERO`
+- `yuyangalin/ImageWAM-FLUX.2-4B-RoboTwin`
+- `yuyangalin/ImageWAM-FLUX.2-9B-LIBERO`
+
+其他变体的checkpoint即将放出。
 
 ```bash
-mkdir -p checkpoints/imagewam_release
-
-huggingface-cli download TODO_IMAGEWAM_MODEL_REPO \
+mkdir -p checkpoints/imagewam_release/libero/flux2_klein_4b
+huggingface-cli download yuyangalin/ImageWAM-FLUX.2-4B-LIBERO \
   --repo-type model \
-  --local-dir checkpoints/imagewam_release
+  --local-dir checkpoints/imagewam_release/libero/flux2_klein_4b
+
+mkdir -p checkpoints/imagewam_release/robotwin/flux2_klein_4b
+huggingface-cli download yuyangalin/ImageWAM-FLUX.2-4B-RoboTwin \
+  --repo-type model \
+  --local-dir checkpoints/imagewam_release/robotwin/flux2_klein_4b
+
+mkdir -p checkpoints/imagewam_release/libero/flux2_klein_9b
+huggingface-cli download yuyangalin/ImageWAM-FLUX.2-9B-LIBERO \
+  --repo-type model \
+  --local-dir checkpoints/imagewam_release/libero/flux2_klein_9b
 ```
-<!-- huggingface-cli download TODO_IMAGEWAM_MODEL_REPO \
-  libero/flux2_klein_4b/checkpoint.pt \
-  libero/flux2_klein_4b/dataset_stats.json \
-  robotwin/flux2_klein_4b/checkpoint.pt \
-  robotwin/flux2_klein_4b/dataset_stats.json \
-  libero_plus/flux2_klein_9b/checkpoint.pt \
-  libero_plus/flux2_klein_9b/dataset_stats.json \
-  libero/omnigen2/checkpoint.pt \
-  libero/omnigen2/dataset_stats.json \
-  robotwin/omnigen2/checkpoint.pt \
-  robotwin/omnigen2/dataset_stats.json \
-  libero_plus/omnigen2/checkpoint.pt \
-  libero_plus/omnigen2/dataset_stats.json \
-  libero_plus/ovis_u1/checkpoint.pt \
-  libero_plus/ovis_u1/dataset_stats.json \
-  --local-dir checkpoints/imagewam_release -->
+
+每个模型目录应包含 `checkpoint.pt`、`dataset_stats.json`，以及原始训练配置，通常命名为 `train_config.yaml`。
+
 使用 release 权重评测 FLUX.2 LIBERO 的示例：
 
 ```bash
