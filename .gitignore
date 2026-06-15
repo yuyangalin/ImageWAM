@@ -277,6 +277,8 @@ third_party/LIBERO
 third_party/LIBERO-plus
 third_party/flux2
 third_party/OmniGen2
-third_party/RoboTwin/assets/
+third_party/RoboTwin/assets/*
+!third_party/RoboTwin/assets/
+!third_party/RoboTwin/assets/_download.py
 *.tmp
 OPEN_SOURCE_RELEASE_PLAN.md
