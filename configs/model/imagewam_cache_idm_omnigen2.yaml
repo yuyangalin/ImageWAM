@@ -1,0 +1,51 @@
+_target_: imagewam.runtime.create_imagewam_cache_idm_omnigen2
+
+omnigen2_model_path: ???
+omnigen2_vae_path: ???
+qwen_path: ???
+transformer_subfolder: transformer
+vae_subfolder: vae
+load_text_encoder: false
+proprio_dim: null
+mot_checkpoint_mixed_attn: true
+mot_gqa_implementation: repeat
+mot_force_flash_attention: false
+omnigen2_online_text_cache_compatible: false
+qwen_context_len: 128
+# Default off for old checkpoint compatibility. Set true for new runs that need
+# the OmniGen2 text-padding/proprio packing fix.
+pack_proprio_after_text: false
+cache_idm_train_schedule: sequential_micro
+cache_idm_alternate_loss_scale: 1.0
+cache_idm_ddp_zero_anchor: true
+action_dit_pretrained_path: null
+
+action_dit_config:
+  action_dim: ${data.train.processor.action_output_dim}
+  residual_dim: 1024
+  num_heads: 24
+  num_kv_heads: 8
+  attn_head_dim: 96
+  num_layers: 26
+  multiple_of: 256
+  ffn_dim_multiplier: null
+  norm_eps: 1.0e-5
+  frequency_embedding_size: 256
+  timestep_scale: 1.0
+  max_action_horizon: 64
+  rope_theta: 10000.0
+  use_gradient_checkpointing: ${model.mot_checkpoint_mixed_attn}
+
+video_scheduler:
+  train_shift: 5.0
+  infer_shift: 5.0
+  num_train_timesteps: 1000
+
+action_scheduler:
+  train_shift: 5.0
+  infer_shift: 5.0
+  num_train_timesteps: 1000
+
+loss:
+  lambda_video: 0.5
+  lambda_action: 1.0

@@ -282,3 +282,5 @@ third_party/RoboTwin/assets/*
 !third_party/RoboTwin/assets/_download.py
 *.tmp
 OPEN_SOURCE_RELEASE_PLAN.md
+docs/model_card_*.md
+docs/huggingface_model_card_template.md

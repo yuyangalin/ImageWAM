@@ -1056,17 +1056,52 @@ class Wan22Trainer:
             with self.accelerator.accumulate(self.model):
                 train_model = self.model if hasattr(self.model, "training_loss") else self.accelerator.unwrap_model(self.model)
 
-                forward_start = time.perf_counter()
-                with self.accelerator.autocast():
-                    loss, loss_dict = train_model.training_loss(sample)
-                self._rank_timer_sync(timer_active)
-                step_timings["forward"] = time.perf_counter() - forward_start
-                self._maybe_log_omnigen2_forward_profile(loss.device)
+                iter_training_losses = getattr(train_model, "iter_training_losses", None)
+                loss = None
+                loss_dict = {}
+                forward_elapsed = 0.0
+                backward_elapsed = 0.0
 
-                backward_start = time.perf_counter()
-                self.accelerator.backward(loss)
+                if callable(iter_training_losses):
+                    objective_iter = iter(iter_training_losses(sample))
+                    objective_count = 0
+                    while True:
+                        objective_forward_start = time.perf_counter()
+                        try:
+                            with self.accelerator.autocast():
+                                objective_loss, objective_loss_dict = next(objective_iter)
+                        except StopIteration:
+                            break
+                        forward_elapsed += time.perf_counter() - objective_forward_start
+                        objective_count += 1
+                        loss = (
+                            objective_loss.detach().float()
+                            if loss is None
+                            else loss + objective_loss.detach().float()
+                        )
+                        for key, value in objective_loss_dict.items():
+                            loss_dict[key] = float(value)
+
+                        objective_backward_start = time.perf_counter()
+                        self.accelerator.backward(objective_loss)
+                        backward_elapsed += time.perf_counter() - objective_backward_start
+
+                    if objective_count <= 0:
+                        raise RuntimeError("`iter_training_losses` yielded no training losses.")
+                else:
+                    forward_start = time.perf_counter()
+                    with self.accelerator.autocast():
+                        loss, loss_dict = train_model.training_loss(sample)
+                    forward_elapsed = time.perf_counter() - forward_start
+
+                    backward_start = time.perf_counter()
+                    self.accelerator.backward(loss)
+                    backward_elapsed = time.perf_counter() - backward_start
+
                 self._rank_timer_sync(timer_active)
-                step_timings["backward"] = time.perf_counter() - backward_start
+                step_timings["forward"] = forward_elapsed
+                self._maybe_log_omnigen2_forward_profile(loss.device)
+                step_timings["backward"] = backward_elapsed
 
                 if self.accelerator.sync_gradients:
                     optimizer_start = time.perf_counter()
