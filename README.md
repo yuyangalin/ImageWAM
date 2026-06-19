@@ -2,9 +2,9 @@
 
 Official codebase for **ImageWAM: Do World Action Models Really Need Video Generation, or Just Image Editing?**
 
-[English](./README.md) | [中文](./README_zh.md)
+[English](./README.md) | [中文](./README_zh.md) 
 
-Project page, paper link, model checkpoints, and dataset links will be added before the official release.
+[Huggingface Models](https://huggingface.co/collections/yuyangalin/imagewam) | [Paper](https://arxiv.org/abs/2606.19531) | [Project Page](zhangwenyao1.github.io/ImageWAM/)
 
 ImageWAM is a family of world action models built on image-editing foundation models. This repository contains the training and evaluation code used in the paper experiments on LIBERO, LIBERO-plus, and RoboTwin.
 
@@ -469,11 +469,12 @@ ImageWAM is built on several codebases:
 If you find this repository helpful for your research, please cite our paper:
 
 ```bibtex
-@misc{imagewam2026,
+@misc{zhangimagewam2026,
   title  = {ImageWAM: Do World Action Models Really Need Video Generation, or Just Image Editing?},
-  author = {TODO},
-  year   = {2026},
-  note   = {TODO: add arXiv or conference information}
+  author = {Yuyang Zhang, Wenyao Zhang, Zekun Qi, He Zhang, Haitao Lin, Jingbo Zhang, Yao Mu, Xiaokang Yang, Wenjun Zeng, Xin Jin},
+  eprint={2606.19531},
+  archivePrefix={arXiv},
+  url={https://arxiv.org/abs/2606.19531}, 
 }
 ```
 
