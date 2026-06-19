@@ -342,7 +342,7 @@ bash scripts/ovis_u1/run_train_ovis_u1_imagewam.sh
 Evaluation scripts support directly specifying a checkpoint:
 
 ```bash
-export CKPT_PATH=/path/to/checkpoint.pt
+export CKPT_PATH=/path/to/model.pt
 export DATASET_STATS_PATH=/path/to/dataset_stats.json
 ```
 
@@ -445,12 +445,12 @@ huggingface-cli download yuyangalin/ImageWAM-FLUX.2-9B-LIBERO \
   --local-dir checkpoints/imagewam_release/libero/flux2_klein_9b
 ```
 
-Each model directory is expected to contain `checkpoint.pt`, `dataset_stats.json`, and the original training config, usually `train_config.yaml`.
+Each model directory is expected to contain `model.pt`, `dataset_stats.json`, and the original training config, usually `train_config.yaml`.
 
 Example: evaluate the released FLUX.2 LIBERO checkpoint:
 
 ```bash
-export CKPT_PATH="$(pwd)/checkpoints/imagewam_release/libero/flux2_klein_4b/checkpoint.pt"
+export CKPT_PATH="$(pwd)/checkpoints/imagewam_release/libero/flux2_klein_4b/model.pt"
 export DATASET_STATS_PATH="$(pwd)/checkpoints/imagewam_release/libero/flux2_klein_4b/dataset_stats.json"
 
 NUM_GPUS=8 FLUX2_VARIANT=4b bash scripts/flux2/run_eval_flux2_libero.sh
