@@ -34,6 +34,10 @@ run_libero_eval() {
     export WORKER_ENV_SOURCE
     WORKER_PYTHONPATH=${WORKER_PYTHONPATH:-${PYTHONPATH:-}}
     export WORKER_PYTHONPATH
+    local tmux_bin="${TMUX_BIN:-/usr/bin/tmux}"
+    tmux() {
+        env -u LD_LIBRARY_PATH "$tmux_bin" "$@"
+    }
 
     echo "EXP_NAME: $EXP_NAME"
     echo "MUJOCO_GL: $MUJOCO_GL"

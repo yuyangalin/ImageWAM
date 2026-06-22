@@ -1212,6 +1212,7 @@ class Wan22Trainer:
                                 eval_payload["eval/action_l1"] = float(metrics["action_l1"])
                             self._wandb_log(eval_payload)
 
+                    ckpt_info = None
                     if self.save_every > 0 and self.global_step % self.save_every == 0:
                         ckpt_info = self.save_checkpoint()
                         if self.accelerator.is_main_process:
@@ -1223,7 +1224,8 @@ class Wan22Trainer:
                             )
 
                     if self.global_step >= self.max_steps:
-                        ckpt_info = self.save_checkpoint()
+                        if ckpt_info is None:
+                            ckpt_info = self.save_checkpoint()
                         if self.accelerator.is_main_process:
                             logger.info(
                                 "[done] max_steps reached step=%d weights=%s state=%s",
