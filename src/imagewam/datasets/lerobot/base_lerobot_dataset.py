@@ -267,6 +267,7 @@ class BaseLerobotDataset(torch.utils.data.Dataset):
         if self.lerobot_backend == "v2":
             dataset_kwargs["lerobot_meta_cache"] = meta_cache_by_root if meta_cache_by_root else None
             dataset_kwargs["hf_dataset_cache_dir"] = arrow_cache_dir
+            dataset_kwargs["video_backend"] = lerobot_v3_video_backend
         else:
             dataset_kwargs["init_num_workers"] = int(lerobot_v3_init_num_workers)
             dataset_kwargs["index_cache_path"] = lerobot_v3_index_cache

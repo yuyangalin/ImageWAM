@@ -1031,6 +1031,7 @@ def run_training(cfg: DictConfig):
         is_main_process=torch.distributed.get_rank() == 0 if torch.distributed.is_initialized() else True,
     )
     misc.register_work_dir(cfg.output_dir)
+    Path(cfg.output_dir).mkdir(parents=True, exist_ok=True)
     config_payload = OmegaConf.to_container(cfg, resolve=True)
     with open(Path(cfg.output_dir) / "config.yaml", "w") as f:
         OmegaConf.save(config_payload, f)
