@@ -170,7 +170,7 @@ def _variant_to_model_spec(variant: str) -> str:
     raise ValueError(f"Unsupported FLUX.2 variant for Qwen3 cache: {variant!r}")
 
 
-@hydra.main(config_path="../configs", config_name="train", version_base="1.3")
+@hydra.main(config_path="../../configs", config_name="train", version_base="1.3")
 def main(cfg: DictConfig) -> None:
     setup_logging(log_level=logging.INFO)
     if cfg.data is None:

@@ -1798,7 +1798,8 @@ class MultiLeRobotDataset(torch.utils.data.Dataset):
     def get_episode_data(self, episode_idx: int) -> dict:
         for dataset_idx, dataset in enumerate(self._datasets):
             if episode_idx < dataset.num_episodes:
-                file = str(dataset.root / dataset.meta.get_data_file_path(dataset.episodes[episode_idx]))
+                episode_id = episode_idx if dataset.episodes is None else dataset.episodes[episode_idx]
+                file = str(dataset.root / dataset.meta.get_data_file_path(episode_id))
                 table = pq.read_table(str(file))
 
                 result_dict = {}
