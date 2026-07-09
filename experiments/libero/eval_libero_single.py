@@ -547,6 +547,7 @@ def _predict_action_chunk(
         "action_horizon": action_horizon,
         "negative_prompt": str(cfg.EVALUATION.get("negative_prompt", "")),
         "text_cfg_scale": float(cfg.EVALUATION.get("text_cfg_scale", 1.0)),
+        "tau_star": float(cfg.EVALUATION.get("tau_star", 0.0)),
         "num_inference_steps": num_inference_steps,
         "proprio": proprio,
         "sigma_shift": (

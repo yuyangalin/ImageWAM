@@ -2893,6 +2893,7 @@ class ImageWAM(torch.nn.Module):
         rand_device: str = "cpu",
         tiled: bool = False,
         test_action_with_infer_action: bool = True,
+        tau_star: Optional[float] = 0.0,
     ) -> dict[str, Any]:
         self.eval()
         if test_action_with_infer_action:
@@ -2910,6 +2911,7 @@ class ImageWAM(torch.nn.Module):
                 rand_device=rand_device,
                 tiled=tiled,
                 proprio=proprio.clone() if proprio is not None else None,
+                tau_star=tau_star,
             )["action"]
         
         if input_image.ndim == 3:
@@ -3054,6 +3056,19 @@ class ImageWAM(torch.nn.Module):
             "action": action_out,
         }
 
+    def _tau_star_to_video_timestep(
+        self,
+        tau_star: Optional[float],
+        *,
+        batch_size: int,
+        dtype: torch.dtype,
+    ) -> torch.Tensor:
+        tau = 0.0 if tau_star is None else float(tau_star)
+        if tau < 0.0 or tau > 1.0:
+            raise ValueError(f"`tau_star` must be in [0, 1], got {tau}.")
+        timestep = tau * float(self.infer_video_scheduler.num_train_timesteps)
+        return torch.full((batch_size,), timestep, dtype=dtype, device=self.device)
+
     @torch.no_grad()
     def infer_action(
         self,
@@ -3071,6 +3086,7 @@ class ImageWAM(torch.nn.Module):
         rand_device: str = "cpu",
         tiled: bool = False,
         profile_infer_timing: bool = False,
+        tau_star: Optional[float] = 0.0,
     ) -> dict[str, Any]:
         if self.stack == "dim":
             return self.infer_action_dim(
@@ -3097,6 +3113,7 @@ class ImageWAM(torch.nn.Module):
                 sigma_shift=sigma_shift,
                 seed=seed,
                 rand_device=rand_device,
+                tau_star=tau_star,
             )
         if self.stack == "ovis_u1":
             return self.infer_action_ovis_u1(
@@ -3110,6 +3127,7 @@ class ImageWAM(torch.nn.Module):
                 sigma_shift=sigma_shift,
                 seed=seed,
                 rand_device=rand_device,
+                tau_star=tau_star,
             )
         if self.stack == "omnigen2":
             return self.infer_action_omnigen2(
@@ -3124,6 +3142,7 @@ class ImageWAM(torch.nn.Module):
                 seed=seed,
                 rand_device=rand_device,
                 profile_infer_timing=profile_infer_timing,
+                tau_star=tau_star,
             )
 
         self.eval()
@@ -3197,10 +3216,10 @@ class ImageWAM(torch.nn.Module):
                 proprio=proprio,
             )
 
-        timestep_video = torch.zeros(
-            (first_frame_latents.shape[0],),
+        timestep_video = self._tau_star_to_video_timestep(
+            tau_star,
+            batch_size=first_frame_latents.shape[0],
             dtype=first_frame_latents.dtype,
-            device=self.device,
         )
         video_pre = self.video_expert.pre_dit(
             x=first_frame_latents,
@@ -3524,6 +3543,7 @@ class ImageWAM(torch.nn.Module):
         sigma_shift: Optional[float] = None,
         seed: Optional[int] = None,
         rand_device: str = "cpu",
+        tau_star: Optional[float] = 0.0,
     ) -> dict[str, Any]:
         self.eval()
         if input_image.ndim == 3:
@@ -3559,7 +3579,11 @@ class ImageWAM(torch.nn.Module):
             dtype=latents_action.dtype,
             shift_override=sigma_shift,
         )
-        video_timestep = torch.zeros((batch_size,), dtype=ref_tokens.dtype, device=self.device)
+        video_timestep = self._tau_star_to_video_timestep(
+            tau_star,
+            batch_size=batch_size,
+            dtype=ref_tokens.dtype,
+        )
         video_pre = self.video_expert.pre_dit(
             x=empty_target,
             timestep=video_timestep,
@@ -3790,6 +3814,7 @@ class ImageWAM(torch.nn.Module):
         seed: Optional[int] = None,
         rand_device: str = "cpu",
         profile_infer_timing: bool = False,
+        tau_star: Optional[float] = 0.0,
     ) -> dict[str, Any]:
         self.eval()
         if input_image.ndim == 3:
@@ -3847,7 +3872,11 @@ class ImageWAM(torch.nn.Module):
         ).to(device=self.device, dtype=self.torch_dtype)
         _mark_profile("sample_latents_s")
 
-        timestep_video = torch.zeros((batch_size,), dtype=ref_latent.dtype, device=self.device)
+        timestep_video = self._tau_star_to_video_timestep(
+            tau_star,
+            batch_size=batch_size,
+            dtype=ref_latent.dtype,
+        )
         _mark_profile("prepare_video_timestep_s")
         video_pre = self.video_expert.pre_dit(
             x=None,
@@ -3963,6 +3992,7 @@ class ImageWAM(torch.nn.Module):
         sigma_shift: Optional[float] = None,
         seed: Optional[int] = None,
         rand_device: str = "cpu",
+        tau_star: Optional[float] = 0.0,
     ) -> dict[str, Any]:
         self.eval()
         if input_image.ndim == 3:
@@ -3999,7 +4029,11 @@ class ImageWAM(torch.nn.Module):
             device=rand_device,
             dtype=torch.float32,
         ).to(device=self.device, dtype=self.torch_dtype)
-        timestep_video = torch.zeros((batch_size,), dtype=self.torch_dtype, device=self.device)
+        timestep_video = self._tau_star_to_video_timestep(
+            tau_star,
+            batch_size=batch_size,
+            dtype=self.torch_dtype,
+        )
         video_pre = self.video_expert.pre_dit(
             x=empty_target,
             timestep=timestep_video,
@@ -4234,6 +4268,7 @@ class ImageWAM(torch.nn.Module):
         seed: Optional[int] = None,
         rand_device: str = "cpu",
         tiled: bool = False,
+        tau_star: Optional[float] = 0.0,
     ):
         if self.stack == "ovis_u1":
             if action_horizon is None:
@@ -4249,6 +4284,7 @@ class ImageWAM(torch.nn.Module):
                 sigma_shift=sigma_shift,
                 seed=seed,
                 rand_device=rand_device,
+                tau_star=tau_star,
             )
             video_out = self.infer_video_ovis_u1(
                 prompt=prompt,
@@ -4281,6 +4317,7 @@ class ImageWAM(torch.nn.Module):
                 sigma_shift=sigma_shift,
                 seed=seed,
                 rand_device=rand_device,
+                tau_star=tau_star,
             )
             video_out = self.infer_video_omnigen2(
                 prompt=prompt,
@@ -4328,6 +4365,7 @@ class ImageWAM(torch.nn.Module):
                 sigma_shift=sigma_shift,
                 seed=seed,
                 rand_device=rand_device,
+                tau_star=tau_star,
             )
             video_out = self.infer_video_flux2(
                 prompt=prompt,
@@ -4360,6 +4398,7 @@ class ImageWAM(torch.nn.Module):
             seed=seed,
             rand_device=rand_device,
             tiled=tiled,
+            tau_star=tau_star,
         )
 
     def save_checkpoint(self, path, optimizer=None, step=None):

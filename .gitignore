@@ -34,6 +34,7 @@ scripts/optional/
 
 
 # ai coding
+.agent/
 .codex/
 .claude/
 

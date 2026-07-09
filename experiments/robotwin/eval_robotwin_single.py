@@ -216,6 +216,7 @@ def main(cfg: DictConfig):
     _append_override(overrides, "dataset_stats_path", str(dataset_stats_path))
     _append_override(overrides, "action_horizon", cfg.EVALUATION.action_horizon)
     _append_override(overrides, "replan_steps", cfg.EVALUATION.replan_steps)
+    _append_override(overrides, "tau_star", cfg.EVALUATION.tau_star)
     _append_override(overrides, "num_inference_steps", cfg.EVALUATION.num_inference_steps)
     _append_override(overrides, "sigma_shift", cfg.EVALUATION.sigma_shift)
     _append_override(overrides, "text_cfg_scale", cfg.EVALUATION.text_cfg_scale)

@@ -207,6 +207,7 @@ class WorldActionRobotWinPolicy:
         model_dtype: torch.dtype,
         action_horizon: int,
         replan_steps: int,
+        tau_star: float,
         num_inference_steps: int,
         sigma_shift: Optional[float],
         seed: Optional[int],
@@ -232,6 +233,7 @@ class WorldActionRobotWinPolicy:
 
         self.action_horizon = int(action_horizon)
         self.replan_steps = int(max(1, min(replan_steps, action_horizon)))
+        self.tau_star = float(tau_star)
         self.num_inference_steps = int(num_inference_steps)
         self.sigma_shift = sigma_shift
         self.seed = seed
@@ -323,6 +325,7 @@ class WorldActionRobotWinPolicy:
             "proprio": proprio,
             "negative_prompt": self.negative_prompt,
             "text_cfg_scale": self.text_cfg_scale,
+            "tau_star": self.tau_star,
             "num_inference_steps": self.num_inference_steps,
             "sigma_shift": self.sigma_shift,
             "seed": self.seed,
@@ -561,6 +564,10 @@ def get_model(usr_args: Dict[str, Any]):
     if replan_steps is None:
         replan_steps = int(cfg.EVALUATION.get("replan_steps", 8))
 
+    tau_star = _parse_optional_float(usr_args.get("tau_star"))
+    if tau_star is None:
+        tau_star = float(cfg.EVALUATION.get("tau_star", 0.0))
+
     num_inference_steps = _parse_optional_int(usr_args.get("num_inference_steps"))
     if num_inference_steps is None:
         num_inference_steps = int(cfg.EVALUATION.get("num_inference_steps", cfg.eval_num_inference_steps))
@@ -596,6 +603,7 @@ def get_model(usr_args: Dict[str, Any]):
         model_dtype=model_dtype,
         action_horizon=action_horizon,
         replan_steps=replan_steps,
+        tau_star=tau_star,
         num_inference_steps=num_inference_steps,
         sigma_shift=sigma_shift,
         seed=seed,

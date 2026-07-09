@@ -32,6 +32,7 @@ EVALUATION:
 
   # Action inference
   action_horizon: null
+  tau_star: 0.0
   num_inference_steps: ${eval_num_inference_steps}
   sigma_shift: null
   text_cfg_scale: 1.0
