@@ -29,7 +29,8 @@
     <a href="./LICENSE"><img src="https://img.shields.io/badge/License-MIT-green.svg" alt="MIT License"></a>
   </p>
   <p>
-    <a href="https://paperswithcode.co/benchmark/robotwin?task=robotics&amp;eval=13822"><img src="https://paperswithcode.co/api/v1/papers/2606.19531/leaderboard-badge.svg?eval=13822&amp;live=1" alt="Papers with Code: #5 on RoboTwin 2.0"></a>
+    <a href="https://paperswithcode.co/benchmark/robotwin-2-0-easy-50-tasks?task=robotics&amp;eval=15812"><img src="https://paperswithcode.co/api/v1/papers/2606.19531/leaderboard-badge.svg?eval=15812&amp;live=1" alt="Papers with Code: SOTA on RoboTwin 2.0 Easy (50 Tasks)"></a>
+    <a href="https://paperswithcode.co/benchmark/robotwin-2-0-hard-50-tasks?task=robotics&amp;eval=15813"><img src="https://paperswithcode.co/api/v1/papers/2606.19531/leaderboard-badge.svg?eval=15813&amp;live=1" alt="Papers with Code: SOTA on RoboTwin 2.0 Hard (50 Tasks)"></a>
   </p>
   <p><a href="./README.md">English</a> | <a href="./README_zh.md">中文</a></p>
 </div>
